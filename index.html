@@ -6,6 +6,17 @@
   <title>Bren Pi Shop</title>
 
   <style>
+    .auth-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 11px;
+  border: none;
+  border-radius: 10px;
+  background: white;
+  color: #5b2ca0;
+  font-weight: bold;
+  cursor: pointer;
+    }
     * {
       box-sizing: border-box;
       margin: 0;
@@ -257,6 +268,9 @@
   <div class="top">
     <div class="logo">🟣 Bren Pi Shop</div>
     <div class="wallet">💰 Wallet</div>
+    <button onclick="openAuth()" class="auth-btn">
+  👤 Login / Sign Up
+    </button>
   </div>
 
   <input
