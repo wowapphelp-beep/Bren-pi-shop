@@ -526,21 +526,22 @@
       placeholder="Password"
     >
 
+  
     <button
-      class="auth-submit"
-      onclick="signUp()"
-      id="signupButton"
-    >
-      Create Account
-    </button>
-
-    <button
-      class="login-link"
-      onclick="showLogin()"
-      id="loginModeButton"
-    >
-      Already have an account? Login
-    </button>
+  type="button"
+  class="auth-submit"
+  id="signupButton"
+  onclick="signUp()"
+>
+ </button>
+    
+      <button
+  type="button"
+  class="login-link"
+  onclick="showLogin()"
+  id="loginModeButton"
+>
+      </button>
 
     <p id="authMessage"></p>
 
@@ -585,10 +586,18 @@
 
   console.log("Bren Pi Shop connected to Supabase");
 </script>
-  <script>
+
+<script>
 
 function openAuth() {
-  document.getElementById("authModal").style.display = "flex";
+  const modal = document.getElementById("authModal");
+
+  if (!modal) {
+    alert("Auth window not found");
+    return;
+  }
+
+  modal.style.display = "flex";
 }
 
 function closeAuth() {
@@ -596,20 +605,33 @@ function closeAuth() {
 }
 
 function showLogin() {
-  document.getElementById("authTitle").textContent = "Login to your account";
+
+  document.getElementById("authTitle").textContent =
+    "Login to your account";
+
   document.getElementById("fullName").style.display = "none";
-  document.getElementById("signupButton").textContent = "Login";
-  document.getElementById("signupButton").onclick = login;
+
+  const button = document.getElementById("signupButton");
+
+  button.textContent = "Login";
+  button.onclick = login;
+
   document.getElementById("loginModeButton").style.display = "none";
 }
 
 async function signUp() {
 
-  const fullName = document.getElementById("fullName").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+  const fullName =
+    document.getElementById("fullName").value.trim();
 
-  const message = document.getElementById("authMessage");
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  const message =
+    document.getElementById("authMessage");
 
   if (!fullName || !email || !password) {
     message.textContent = "Please fill all fields.";
@@ -617,55 +639,108 @@ async function signUp() {
   }
 
   if (password.length < 6) {
-    message.textContent = "Password must be at least 6 characters.";
+    message.textContent =
+      "Password must be at least 6 characters.";
     return;
   }
 
-  const { data, error } = await supabaseClient.auth.signUp({
-    email: email,
-    password: password,
-    options: {
-      data: {
-        full_name: fullName
-      }
+  if (typeof supabaseClient === "undefined") {
+    message.textContent =
+      "Supabase connection not found.";
+    return;
+  }
+
+  message.textContent = "Creating account...";
+
+  try {
+
+    const { data, error } =
+      await supabaseClient.auth.signUp({
+
+        email: email,
+        password: password,
+
+        options: {
+          data: {
+            full_name: fullName
+          }
+        }
+
+      });
+
+    if (error) {
+      message.textContent = error.message;
+      return;
     }
-  });
 
-  if (error) {
-    message.textContent = error.message;
-    return;
+    message.textContent =
+      "✅ Account created! Please check your email.";
+
+  } catch (error) {
+
+    message.textContent =
+      "Error: " + error.message;
+
   }
-
-  message.textContent =
-    "Account created! Check your email if email confirmation is enabled.";
 }
 
 async function login() {
 
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+  const email =
+    document.getElementById("email").value.trim();
 
-  const message = document.getElementById("authMessage");
+  const password =
+    document.getElementById("password").value;
 
-  const { data, error } =
-    await supabaseClient.auth.signInWithPassword({
-      email: email,
-      password: password
-    });
+  const message =
+    document.getElementById("authMessage");
 
-  if (error) {
-    message.textContent = error.message;
+  if (!email || !password) {
+    message.textContent =
+      "Please enter email and password.";
     return;
   }
 
-  message.textContent = "Login successful!";
+  if (typeof supabaseClient === "undefined") {
+    message.textContent =
+      "Supabase connection not found.";
+    return;
+  }
 
-  setTimeout(() => {
-    closeAuth();
-    location.reload();
-  }, 1000);
+  message.textContent = "Logging in...";
+
+  try {
+
+    const { data, error } =
+      await supabaseClient.auth.signInWithPassword({
+
+        email: email,
+        password: password
+
+      });
+
+    if (error) {
+      message.textContent = error.message;
+      return;
+    }
+
+    message.textContent =
+      "✅ Login successful!";
+
+    setTimeout(function () {
+      closeAuth();
+      location.reload();
+    }, 1000);
+
+  } catch (error) {
+
+    message.textContent =
+      "Error: " + error.message;
+
+  }
 }
 
-    </script>
+</script>
+    
 </body>
   </html>
